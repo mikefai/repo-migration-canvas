@@ -94,8 +94,8 @@ export const TaskNode = memo(({ id, data, selected }) => {
 
   return (
     <div
-      className={`w-84 rounded-2xl border-3 bg-white dark:bg-slate-950/90 backdrop-blur-md shadow-xl transition-all duration-200 overflow-visible relative ${
-        selected ? 'ring-4 ring-indigo-500/50 border-indigo-600 dark:border-indigo-400 scale-[1.02] shadow-2xl' : 'border-indigo-300 dark:border-slate-800'
+      className={`w-84 rounded-2xl border-2 bg-white dark:bg-slate-950 backdrop-blur-md shadow-xl transition-all duration-200 overflow-visible relative ${
+        selected ? 'ring-4 ring-indigo-500/50 border-indigo-600 dark:border-indigo-400 scale-[1.02] shadow-2xl' : 'border-indigo-400 dark:border-indigo-600'
       }`}
     >
       {/* 4-Directional Handles */}
@@ -151,15 +151,15 @@ export const TaskNode = memo(({ id, data, selected }) => {
         className="w-4 h-4 bg-emerald-600 dark:bg-emerald-400 border-2 border-white dark:border-slate-900 !-right-2.5 !top-2/3 hover:scale-150 transition-transform shadow-md cursor-crosshair z-50"
       />
 
-      {/* Header */}
-      <div className="p-3.5 border-b-2 border-indigo-200 dark:border-slate-800 bg-gradient-to-r from-indigo-100 via-slate-50 to-indigo-50 dark:from-indigo-950/60 dark:to-slate-900/60 flex items-center justify-between rounded-t-xl">
+      {/* Solid High-Contrast Header */}
+      <div className="p-3.5 border-b-2 border-indigo-700 dark:border-indigo-900 bg-indigo-600 dark:bg-indigo-950 text-white flex items-center justify-between rounded-t-xl">
         <div className="flex items-center gap-2.5 min-w-0">
-          <StatusIcon className={`w-5 h-5 ${status === 'done' ? 'text-emerald-600 dark:text-emerald-400' : status === 'in-progress' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400'}`} />
-          <h3 className="font-extrabold text-base text-slate-900 dark:text-slate-100 truncate">{data.title || 'Migration Task'}</h3>
+          <StatusIcon className="w-5 h-5 text-indigo-100 dark:text-indigo-300" />
+          <h3 className="font-extrabold text-base text-white dark:text-indigo-100 truncate">{data.title || 'Migration Task'}</h3>
         </div>
         <button
           onClick={handleDeleteNode}
-          className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-1.5 rounded-lg hover:bg-slate-200/80 dark:hover:bg-slate-800 transition-colors"
+          className="text-white/80 hover:text-white p-1.5 rounded-lg hover:bg-black/20 transition-colors"
           title="Delete Task"
         >
           <Trash2 className="w-4.5 h-4.5" />
@@ -167,7 +167,7 @@ export const TaskNode = memo(({ id, data, selected }) => {
       </div>
 
       {/* Body */}
-      <div className="p-4 space-y-3.5">
+      <div className="p-4 space-y-3.5 bg-white/95 dark:bg-slate-950/90 rounded-b-xl">
         {/* Status & Priority Selectors */}
         <div className="flex items-center justify-between gap-2">
           <select

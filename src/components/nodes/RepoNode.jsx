@@ -4,28 +4,36 @@ import { ExternalLink, Copy, Check, GitBranch, Github, Trash2, Tag, Edit2, Link2
 
 const ROLE_STYLES = {
   source: {
-    cardBg: 'bg-white dark:bg-blue-950/90 border-blue-500 dark:border-blue-400 shadow-xl shadow-blue-500/15',
-    badge: 'bg-blue-100 text-blue-900 border-blue-400 dark:bg-blue-500/30 dark:text-blue-300 dark:border-blue-400',
-    headerBg: 'from-blue-100 via-blue-50 to-white dark:from-blue-900/60 dark:to-slate-900/60',
-    iconBg: 'bg-blue-600 text-white dark:bg-blue-500 dark:text-white border-blue-400',
+    cardBg: 'bg-white dark:bg-slate-950 border-2 border-blue-400 dark:border-blue-600 shadow-xl shadow-blue-500/10',
+    badge: 'bg-blue-100 text-blue-950 border-blue-400 dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-500 font-extrabold',
+    headerBg: 'bg-blue-600 dark:bg-blue-950 border-b-2 border-blue-700 dark:border-blue-900 text-white',
+    titleText: 'text-white font-extrabold text-base',
+    ownerText: 'text-blue-100 dark:text-blue-300 font-bold text-xs',
+    iconBg: 'bg-blue-700 text-white dark:bg-blue-900 border-blue-500',
   },
   target: {
-    cardBg: 'bg-white dark:bg-emerald-950/90 border-emerald-500 dark:border-emerald-400 shadow-xl shadow-emerald-500/15',
-    badge: 'bg-emerald-100 text-emerald-900 border-emerald-400 dark:bg-emerald-500/30 dark:text-emerald-300 dark:border-emerald-400',
-    headerBg: 'from-emerald-100 via-emerald-50 to-white dark:from-emerald-900/60 dark:to-slate-900/60',
-    iconBg: 'bg-emerald-600 text-white dark:bg-emerald-500 dark:text-white border-emerald-400',
+    cardBg: 'bg-white dark:bg-slate-950 border-2 border-emerald-400 dark:border-emerald-600 shadow-xl shadow-emerald-500/10',
+    badge: 'bg-emerald-100 text-emerald-950 border-emerald-400 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500 font-extrabold',
+    headerBg: 'bg-emerald-600 dark:bg-emerald-950 border-b-2 border-emerald-700 dark:border-emerald-900 text-white',
+    titleText: 'text-white font-extrabold text-base',
+    ownerText: 'text-emerald-100 dark:text-emerald-300 font-bold text-xs',
+    iconBg: 'bg-emerald-700 text-white dark:bg-emerald-900 border-emerald-500',
   },
   reference: {
-    cardBg: 'bg-white dark:bg-purple-950/90 border-purple-500 dark:border-purple-400 shadow-xl shadow-purple-500/15',
-    badge: 'bg-purple-100 text-purple-900 border-purple-400 dark:bg-purple-500/30 dark:text-purple-300 dark:border-purple-400',
-    headerBg: 'from-purple-100 via-purple-50 to-white dark:from-purple-900/60 dark:to-slate-900/60',
-    iconBg: 'bg-purple-600 text-white dark:bg-purple-500 dark:text-white border-purple-400',
+    cardBg: 'bg-white dark:bg-slate-950 border-2 border-purple-400 dark:border-purple-600 shadow-xl shadow-purple-500/10',
+    badge: 'bg-purple-100 text-purple-950 border-purple-400 dark:bg-purple-500/20 dark:text-purple-300 dark:border-purple-500 font-extrabold',
+    headerBg: 'bg-purple-600 dark:bg-purple-950 border-b-2 border-purple-700 dark:border-purple-900 text-white',
+    titleText: 'text-white font-extrabold text-base',
+    ownerText: 'text-purple-100 dark:text-purple-300 font-bold text-xs',
+    iconBg: 'bg-purple-700 text-white dark:bg-purple-900 border-purple-500',
   },
   archived: {
-    cardBg: 'bg-white dark:bg-amber-950/90 border-amber-500 dark:border-amber-400 shadow-xl shadow-amber-500/15',
-    badge: 'bg-amber-100 text-amber-900 border-amber-400 dark:bg-amber-500/30 dark:text-amber-300 dark:border-amber-400',
-    headerBg: 'from-amber-100 via-amber-50 to-white dark:from-amber-900/60 dark:to-slate-900/60',
-    iconBg: 'bg-amber-600 text-white dark:bg-amber-500 dark:text-white border-amber-400',
+    cardBg: 'bg-white dark:bg-slate-950 border-2 border-amber-400 dark:border-amber-600 shadow-xl shadow-amber-500/10',
+    badge: 'bg-amber-100 text-amber-950 border-amber-400 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500 font-extrabold',
+    headerBg: 'bg-amber-600 dark:bg-amber-950 border-b-2 border-amber-700 dark:border-amber-900 text-white',
+    titleText: 'text-white font-extrabold text-base',
+    ownerText: 'text-amber-100 dark:text-amber-300 font-bold text-xs',
+    iconBg: 'bg-amber-700 text-white dark:bg-amber-900 border-amber-500',
   },
 };
 
@@ -70,12 +78,11 @@ export const RepoNode = memo(({ id, data, selected }) => {
 
   return (
     <div
-      className={`w-84 rounded-2xl border-3 backdrop-blur-md transition-all duration-200 overflow-visible relative ${
+      className={`w-84 rounded-2xl border-2 backdrop-blur-md transition-all duration-200 overflow-visible relative ${
         roleStyle.cardBg
       } ${selected ? 'ring-4 ring-blue-500/50 border-blue-600 dark:border-blue-400 scale-[1.02] shadow-2xl' : ''}`}
     >
-      {/* 4-Directional Dual Source & Target Connection Handles for Seamless Linking */}
-      {/* Top Handles */}
+      {/* 4-Directional Dual Source & Target Connection Handles */}
       <Handle
         type="target"
         position={Position.Top}
@@ -91,7 +98,6 @@ export const RepoNode = memo(({ id, data, selected }) => {
         title="Connect from Top (Source)"
       />
 
-      {/* Bottom Handles */}
       <Handle
         type="target"
         position={Position.Bottom}
@@ -107,7 +113,6 @@ export const RepoNode = memo(({ id, data, selected }) => {
         title="Connect from Bottom (Source)"
       />
 
-      {/* Left Handles */}
       <Handle
         type="target"
         position={Position.Left}
@@ -123,7 +128,6 @@ export const RepoNode = memo(({ id, data, selected }) => {
         title="Connect from Left (Source)"
       />
 
-      {/* Right Handles */}
       <Handle
         type="target"
         position={Position.Right}
@@ -139,21 +143,21 @@ export const RepoNode = memo(({ id, data, selected }) => {
         title="Connect from Right (Source)"
       />
 
-      {/* Header Bar */}
-      <div className={`p-3.5 border-b-2 border-slate-200 dark:border-slate-800 bg-gradient-to-r ${roleStyle.headerBg} flex items-center justify-between rounded-t-xl`}>
+      {/* Solid High-Contrast Header Bar */}
+      <div className={`p-3.5 ${roleStyle.headerBg} flex items-center justify-between rounded-t-xl`}>
         <div className="flex items-center gap-3 min-w-0">
-          <div className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center flex-shrink-0 font-bold shadow-md ${roleStyle.iconBg}`}>
+          <div className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center flex-shrink-0 font-bold shadow-sm ${roleStyle.iconBg}`}>
             {data.platform === 'github' ? <Github className="w-5 h-5" /> : <GitBranch className="w-5 h-5" />}
           </div>
           <div className="min-w-0">
-            <h3 className="font-extrabold text-base text-slate-900 dark:text-slate-100 truncate tracking-tight">{data.repo || data.fullName || 'Repository'}</h3>
-            <p className="text-xs text-slate-600 dark:text-slate-400 font-bold truncate">{data.owner || 'git-repo'}</p>
+            <h3 className={`${roleStyle.titleText} truncate tracking-tight`}>{data.repo || data.fullName || 'Repository'}</h3>
+            <p className={`${roleStyle.ownerText} truncate`}>{data.owner || 'git-repo'}</p>
           </div>
         </div>
 
         <button
           onClick={handleDeleteNode}
-          className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-1.5 rounded-lg hover:bg-slate-200/80 dark:hover:bg-slate-800 transition-colors"
+          className="text-white/80 hover:text-white p-1.5 rounded-lg hover:bg-black/20 transition-colors"
           title="Delete Repository Card"
         >
           <Trash2 className="w-4.5 h-4.5" />
@@ -161,14 +165,14 @@ export const RepoNode = memo(({ id, data, selected }) => {
       </div>
 
       {/* Body Content */}
-      <div className="p-4 space-y-3.5 bg-white/95 dark:bg-slate-950/80 rounded-b-xl">
+      <div className="p-4 space-y-3.5 bg-white/95 dark:bg-slate-950/90 rounded-b-xl">
         {/* Role & Platform Badges */}
         <div className="flex items-center justify-between gap-2">
           <select
             value={roleKey}
             onChange={handleRoleChange}
             onClick={(e) => e.stopPropagation()}
-            className={`text-xs px-3.5 py-1.5 rounded-full font-extrabold border-2 cursor-pointer focus:outline-none shadow-sm uppercase tracking-wide ${roleStyle.badge}`}
+            className={`text-xs px-3.5 py-1.5 rounded-full font-extrabold border-2 cursor-pointer focus:outline-none shadow-xs uppercase tracking-wide ${roleStyle.badge}`}
           >
             <option value="source">SOURCE REPO</option>
             <option value="target">TARGET REPO</option>
