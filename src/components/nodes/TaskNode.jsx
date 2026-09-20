@@ -5,26 +5,26 @@ import { CheckSquare, Square, Plus, Trash2, Clock, CheckCircle2, Sparkles } from
 const STATUS_CONFIG = {
   'todo': {
     label: 'TO DO',
-    badge: 'bg-slate-100 text-slate-800 border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 font-bold',
+    badge: 'bg-slate-100 text-slate-900 border-slate-400 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 font-extrabold',
     icon: Clock,
   },
   'in-progress': {
     label: 'IN PROGRESS',
-    badge: 'bg-blue-100 text-blue-900 border-blue-400 dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500/40 font-bold',
+    badge: 'bg-blue-100 text-blue-900 border-blue-400 dark:bg-blue-500/30 dark:text-blue-300 dark:border-blue-400 font-extrabold',
     icon: Sparkles,
   },
   'done': {
     label: 'DONE',
-    badge: 'bg-emerald-100 text-emerald-900 border-emerald-400 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/40 font-bold',
+    badge: 'bg-emerald-100 text-emerald-900 border-emerald-400 dark:bg-emerald-500/30 dark:text-emerald-300 dark:border-emerald-400 font-extrabold',
     icon: CheckCircle2,
   },
 };
 
 const PRIORITY_CONFIG = {
-  low: 'text-slate-700 bg-slate-100 border-slate-300 dark:text-slate-400 dark:bg-slate-900 dark:border-slate-800',
-  medium: 'text-amber-900 bg-amber-100 border-amber-300 dark:text-amber-400 dark:bg-amber-950/40 dark:border-amber-800/60 font-semibold',
-  high: 'text-orange-900 bg-orange-100 border-orange-300 dark:text-orange-400 dark:bg-orange-950/40 dark:border-orange-800/60 font-bold',
-  critical: 'text-rose-900 bg-rose-100 border-rose-300 dark:text-rose-400 dark:bg-rose-950/50 dark:border-rose-800/80 font-bold',
+  low: 'text-slate-800 bg-slate-100 border-slate-300 dark:text-slate-300 dark:bg-slate-900 dark:border-slate-800 font-bold',
+  medium: 'text-amber-900 bg-amber-100 border-amber-300 dark:text-amber-300 dark:bg-amber-950/40 dark:border-amber-800/60 font-bold',
+  high: 'text-orange-900 bg-orange-100 border-orange-300 dark:text-orange-300 dark:bg-orange-950/40 dark:border-orange-800/60 font-extrabold',
+  critical: 'text-rose-900 bg-rose-100 border-rose-300 dark:text-rose-300 dark:bg-rose-950/50 dark:border-rose-800/80 font-extrabold',
 };
 
 export const TaskNode = memo(({ id, data, selected }) => {
@@ -94,47 +94,87 @@ export const TaskNode = memo(({ id, data, selected }) => {
 
   return (
     <div
-      className={`w-80 rounded-xl border-2 bg-white dark:bg-slate-950/90 backdrop-blur-md shadow-xl transition-all duration-200 overflow-hidden ${
-        selected ? 'ring-4 ring-indigo-500/40 border-indigo-600 dark:border-indigo-500 scale-[1.02]' : 'border-indigo-200 dark:border-slate-800'
+      className={`w-84 rounded-2xl border-3 bg-white dark:bg-slate-950/90 backdrop-blur-md shadow-xl transition-all duration-200 overflow-visible relative ${
+        selected ? 'ring-4 ring-indigo-500/50 border-indigo-600 dark:border-indigo-400 scale-[1.02] shadow-2xl' : 'border-indigo-300 dark:border-slate-800'
       }`}
     >
-      {/* Handles */}
+      {/* 4-Directional Handles */}
       <Handle
         type="target"
         position={Position.Top}
-        className="w-4 h-4 bg-indigo-600 dark:bg-indigo-500 border-2 border-white dark:border-slate-900 !-top-2 hover:scale-125 transition-transform"
+        id="top-target"
+        className="w-4 h-4 bg-indigo-600 dark:bg-indigo-400 border-2 border-white dark:border-slate-900 !-top-2.5 !left-1/3 hover:scale-150 transition-transform shadow-md cursor-crosshair z-50"
       />
+      <Handle
+        type="source"
+        position={Position.Top}
+        id="top-source"
+        className="w-4 h-4 bg-emerald-600 dark:bg-emerald-400 border-2 border-white dark:border-slate-900 !-top-2.5 !left-2/3 hover:scale-150 transition-transform shadow-md cursor-crosshair z-50"
+      />
+
+      <Handle
+        type="target"
+        position={Position.Bottom}
+        id="bottom-target"
+        className="w-4 h-4 bg-indigo-600 dark:bg-indigo-400 border-2 border-white dark:border-slate-900 !-bottom-2.5 !left-1/3 hover:scale-150 transition-transform shadow-md cursor-crosshair z-50"
+      />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="bottom-source"
+        className="w-4 h-4 bg-emerald-600 dark:bg-emerald-400 border-2 border-white dark:border-slate-900 !-bottom-2.5 !left-2/3 hover:scale-150 transition-transform shadow-md cursor-crosshair z-50"
+      />
+
       <Handle
         type="target"
         position={Position.Left}
-        id="left"
-        className="w-4 h-4 bg-indigo-600 dark:bg-indigo-500 border-2 border-white dark:border-slate-900 !-left-2 hover:scale-125 transition-transform"
+        id="left-target"
+        className="w-4 h-4 bg-indigo-600 dark:bg-indigo-400 border-2 border-white dark:border-slate-900 !-left-2.5 !top-1/3 hover:scale-150 transition-transform shadow-md cursor-crosshair z-50"
+      />
+      <Handle
+        type="source"
+        position={Position.Left}
+        id="left-source"
+        className="w-4 h-4 bg-emerald-600 dark:bg-emerald-400 border-2 border-white dark:border-slate-900 !-left-2.5 !top-2/3 hover:scale-150 transition-transform shadow-md cursor-crosshair z-50"
+      />
+
+      <Handle
+        type="target"
+        position={Position.Right}
+        id="right-target"
+        className="w-4 h-4 bg-indigo-600 dark:bg-indigo-400 border-2 border-white dark:border-slate-900 !-right-2.5 !top-1/3 hover:scale-150 transition-transform shadow-md cursor-crosshair z-50"
+      />
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="right-source"
+        className="w-4 h-4 bg-emerald-600 dark:bg-emerald-400 border-2 border-white dark:border-slate-900 !-right-2.5 !top-2/3 hover:scale-150 transition-transform shadow-md cursor-crosshair z-50"
       />
 
       {/* Header */}
-      <div className="p-3 border-b border-indigo-100 dark:border-slate-800 bg-gradient-to-r from-indigo-100/80 via-slate-50 to-indigo-50 dark:from-indigo-950/50 dark:to-slate-900/50 flex items-center justify-between">
-        <div className="flex items-center gap-2 min-w-0">
-          <StatusIcon className={`w-4 h-4 ${status === 'done' ? 'text-emerald-600 dark:text-emerald-400' : status === 'in-progress' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400'}`} />
-          <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 truncate">{data.title || 'Migration Task'}</h3>
+      <div className="p-3.5 border-b-2 border-indigo-200 dark:border-slate-800 bg-gradient-to-r from-indigo-100 via-slate-50 to-indigo-50 dark:from-indigo-950/60 dark:to-slate-900/60 flex items-center justify-between rounded-t-xl">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <StatusIcon className={`w-5 h-5 ${status === 'done' ? 'text-emerald-600 dark:text-emerald-400' : status === 'in-progress' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400'}`} />
+          <h3 className="font-extrabold text-base text-slate-900 dark:text-slate-100 truncate">{data.title || 'Migration Task'}</h3>
         </div>
         <button
           onClick={handleDeleteNode}
-          className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-1.5 rounded-lg hover:bg-slate-200/60 dark:hover:bg-slate-800/50 transition-colors"
+          className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-1.5 rounded-lg hover:bg-slate-200/80 dark:hover:bg-slate-800 transition-colors"
           title="Delete Task"
         >
-          <Trash2 className="w-4 h-4" />
+          <Trash2 className="w-4.5 h-4.5" />
         </button>
       </div>
 
       {/* Body */}
-      <div className="p-3.5 space-y-3">
+      <div className="p-4 space-y-3.5">
         {/* Status & Priority Selectors */}
         <div className="flex items-center justify-between gap-2">
           <select
             value={status}
             onChange={handleStatusChange}
             onClick={(e) => e.stopPropagation()}
-            className={`text-xs px-3 py-1 rounded-full font-bold border cursor-pointer focus:outline-none shadow-xs ${statusConfig.badge}`}
+            className={`text-xs px-3.5 py-1.5 rounded-full font-extrabold border-2 cursor-pointer focus:outline-none shadow-xs uppercase tracking-wide ${statusConfig.badge}`}
           >
             <option value="todo">TO DO</option>
             <option value="in-progress">IN PROGRESS</option>
@@ -145,7 +185,7 @@ export const TaskNode = memo(({ id, data, selected }) => {
             value={priority}
             onChange={handlePriorityChange}
             onClick={(e) => e.stopPropagation()}
-            className={`text-xs px-2.5 py-0.5 rounded border uppercase font-mono cursor-pointer focus:outline-none ${PRIORITY_CONFIG[priority]}`}
+            className={`text-xs px-3 py-1 rounded-lg border-2 uppercase font-mono cursor-pointer focus:outline-none ${PRIORITY_CONFIG[priority]}`}
           >
             <option value="low">LOW</option>
             <option value="medium">MED</option>
@@ -156,20 +196,20 @@ export const TaskNode = memo(({ id, data, selected }) => {
 
         {/* Task Description */}
         {data.description && (
-          <p className="text-xs text-slate-800 dark:text-slate-300 font-medium leading-relaxed bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800/80">
+          <p className="text-xs text-slate-900 dark:text-slate-200 font-medium leading-relaxed bg-slate-50 dark:bg-slate-900/70 p-3 rounded-xl border-2 border-slate-200 dark:border-slate-800">
             {data.description}
           </p>
         )}
 
         {/* Checklist section */}
         <div className="space-y-2 pt-1">
-          <div className="flex items-center justify-between text-xs text-slate-700 dark:text-slate-400 font-bold">
+          <div className="flex items-center justify-between text-xs text-slate-900 dark:text-slate-300 font-extrabold">
             <span>Checklist</span>
             <span>{completedCount} / {checklist.length} ({progressPct}%)</span>
           </div>
 
           {/* Progress bar */}
-          <div className="w-full bg-slate-200 dark:bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-300 dark:border-slate-800">
+          <div className="w-full bg-slate-200 dark:bg-slate-900 h-2.5 rounded-full overflow-hidden border border-slate-300 dark:border-slate-800">
             <div
               className={`h-full transition-all duration-300 ${
                 progressPct === 100 ? 'bg-emerald-600 dark:bg-emerald-500' : 'bg-blue-600 dark:bg-blue-500'
@@ -179,20 +219,20 @@ export const TaskNode = memo(({ id, data, selected }) => {
           </div>
 
           {/* Checklist items list */}
-          <div className="space-y-1 max-h-36 overflow-y-auto pr-1">
+          <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
             {checklist.map((item) => (
               <div
                 key={item.id}
                 onClick={() => handleToggleChecklist(item.id)}
-                className="group flex items-center justify-between p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900/80 cursor-pointer text-xs transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-800"
+                className="group flex items-center justify-between p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900/80 cursor-pointer text-xs transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-800"
               >
-                <div className="flex items-center gap-2 min-w-0">
+                <div className="flex items-center gap-2.5 min-w-0">
                   {item.done ? (
-                    <CheckSquare className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                    <CheckSquare className="w-4.5 h-4.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                   ) : (
-                    <Square className="w-4 h-4 text-slate-400 dark:text-slate-500 flex-shrink-0" />
+                    <Square className="w-4.5 h-4.5 text-slate-400 dark:text-slate-500 flex-shrink-0" />
                   )}
-                  <span className={`truncate font-medium text-slate-800 dark:text-slate-200 ${item.done ? 'line-through text-slate-400 dark:text-slate-500' : ''}`}>
+                  <span className={`truncate font-semibold text-slate-900 dark:text-slate-200 text-xs ${item.done ? 'line-through text-slate-400 dark:text-slate-500' : ''}`}>
                     {item.text}
                   </span>
                 </div>
@@ -201,47 +241,34 @@ export const TaskNode = memo(({ id, data, selected }) => {
                     e.stopPropagation();
                     handleDeleteCheckItem(item.id);
                   }}
-                  className="opacity-0 group-hover:opacity-100 p-0.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-opacity"
+                  className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-opacity"
                 >
-                  <Trash2 className="w-3.5 h-3.5" />
+                  <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             ))}
           </div>
 
           {/* Add checklist input */}
-          <form onSubmit={handleAddChecklist} className="flex items-center gap-1.5 pt-1">
+          <form onSubmit={handleAddChecklist} className="flex items-center gap-1.5 pt-1.5">
             <input
               type="text"
               value={newCheckitem}
               onChange={(e) => setNewCheckitem(e.target.value)}
               placeholder="Add step/subtask..."
               onClick={(e) => e.stopPropagation()}
-              className="flex-1 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-lg px-2.5 py-1 text-xs text-slate-900 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 font-medium"
+              className="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-800 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-600"
             />
             <button
               type="submit"
               onClick={(e) => e.stopPropagation()}
-              className="p-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-colors"
+              className="p-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md transition-colors"
             >
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-4 h-4" />
             </button>
           </form>
         </div>
       </div>
-
-      {/* Bottom & Right handles */}
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        className="w-4 h-4 bg-indigo-600 dark:bg-indigo-500 border-2 border-white dark:border-slate-900 !-bottom-2 hover:scale-125 transition-transform"
-      />
-      <Handle
-        type="source"
-        position={Position.Right}
-        id="right"
-        className="w-4 h-4 bg-indigo-600 dark:bg-indigo-500 border-2 border-white dark:border-slate-900 !-right-2 hover:scale-125 transition-transform"
-      />
     </div>
   );
 });

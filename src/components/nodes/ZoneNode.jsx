@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { NodeResizer } from '@xyflow/react';
+import { NodeResizer, Handle, Position } from '@xyflow/react';
 import { LayoutGrid, Trash2, Edit2 } from 'lucide-react';
 
 const ZONE_STYLES = {
@@ -65,15 +65,42 @@ export const ZoneNode = memo(({ id, data, selected }) => {
 
   return (
     <div
-      className={`relative w-full h-full rounded-2xl border-2 border-dashed backdrop-blur-xs transition-all ${
+      className={`relative w-full h-full rounded-2xl border-3 border-dashed backdrop-blur-xs transition-all overflow-visible ${
         style.card
       } ${selected ? 'border-solid ring-4 ring-blue-500/30 border-blue-600' : ''}`}
     >
-      <NodeResizer minWidth={200} minHeight={150} isVisible={selected} lineClassName="border-blue-600" handleClassName="h-3.5 w-3.5 bg-blue-600 border-2 border-white rounded-full shadow-md" />
+      <NodeResizer minWidth={200} minHeight={150} isVisible={selected} lineClassName="border-blue-600" handleClassName="h-4 w-4 bg-blue-600 border-2 border-white rounded-full shadow-md" />
+
+      {/* 4-Directional Dual Handles */}
+      <Handle
+        type="target"
+        position={Position.Top}
+        id="top-target"
+        className="w-4 h-4 bg-blue-600 dark:bg-blue-400 border-2 border-white dark:border-slate-900 !-top-2.5 !left-1/3 hover:scale-150 transition-transform shadow-md cursor-crosshair z-50"
+      />
+      <Handle
+        type="source"
+        position={Position.Top}
+        id="top-source"
+        className="w-4 h-4 bg-emerald-600 dark:bg-emerald-400 border-2 border-white dark:border-slate-900 !-top-2.5 !left-2/3 hover:scale-150 transition-transform shadow-md cursor-crosshair z-50"
+      />
+
+      <Handle
+        type="target"
+        position={Position.Bottom}
+        id="bottom-target"
+        className="w-4 h-4 bg-blue-600 dark:bg-blue-400 border-2 border-white dark:border-slate-900 !-bottom-2.5 !left-1/3 hover:scale-150 transition-transform shadow-md cursor-crosshair z-50"
+      />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="bottom-source"
+        className="w-4 h-4 bg-emerald-600 dark:bg-emerald-400 border-2 border-white dark:border-slate-900 !-bottom-2.5 !left-2/3 hover:scale-150 transition-transform shadow-md cursor-crosshair z-50"
+      />
 
       {/* Top zone label bar */}
       <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-auto">
-        <div className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg border-2 shadow-md backdrop-blur-md ${style.header}`}>
+        <div className={`flex items-center gap-2 px-4 py-1.5 rounded-xl border-2 shadow-md backdrop-blur-md ${style.header}`}>
           <LayoutGrid className="w-4 h-4" />
           {isEditing ? (
             <input
@@ -82,22 +109,22 @@ export const ZoneNode = memo(({ id, data, selected }) => {
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               onBlur={handleLabelBlur}
-              className="bg-white/90 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-0.5 text-xs text-slate-900 dark:text-white font-bold focus:outline-none"
+              className="bg-white/90 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-0.5 text-sm text-slate-900 dark:text-white font-extrabold focus:outline-none"
             />
           ) : (
             <span
               onClick={() => setIsEditing(true)}
-              className="font-bold text-xs tracking-wide cursor-pointer hover:underline flex items-center gap-1.5"
+              className="font-extrabold text-sm tracking-wide cursor-pointer hover:underline flex items-center gap-1.5"
             >
               {label}
-              <Edit2 className="w-3 h-3 opacity-70" />
+              <Edit2 className="w-3.5 h-3.5 opacity-70" />
             </span>
           )}
         </div>
 
         {/* Color Palette & Actions */}
-        <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border-2 shadow-md backdrop-blur-md ${style.header}`}>
-          <div className="flex items-center gap-1 pr-1 border-r border-slate-300 dark:border-slate-700">
+        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 shadow-md backdrop-blur-md ${style.header}`}>
+          <div className="flex items-center gap-1.5 pr-1 border-r border-slate-300 dark:border-slate-700">
             {Object.keys(ZONE_STYLES).map((cKey) => (
               <button
                 key={cKey}
@@ -105,7 +132,7 @@ export const ZoneNode = memo(({ id, data, selected }) => {
                   e.stopPropagation();
                   handleColorChange(cKey);
                 }}
-                className={`w-3.5 h-3.5 rounded-full transition-transform ${
+                className={`w-4 h-4 rounded-full transition-transform ${
                   ZONE_STYLES[cKey].dot
                 } ${color === cKey ? 'ring-2 ring-slate-900 dark:ring-white scale-125' : 'opacity-70 hover:opacity-100'}`}
               />
@@ -117,7 +144,7 @@ export const ZoneNode = memo(({ id, data, selected }) => {
             className="p-1 hover:text-rose-600 dark:hover:text-rose-400 rounded transition-colors"
             title="Delete Zone"
           >
-            <Trash2 className="w-3.5 h-3.5" />
+            <Trash2 className="w-4 h-4" />
           </button>
         </div>
       </div>
