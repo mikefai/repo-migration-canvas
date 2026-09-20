@@ -28,6 +28,16 @@ export function App() {
   const [theme, setTheme] = useState('dark');
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Sync html element class for theme switching
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+  }, [theme]);
+
   // Active workspace object
   const activeWorkspace = useMemo(
     () => workspaces.find((w) => w.id === activeId) || workspaces[0],
@@ -184,23 +194,24 @@ export function App() {
   // Connection handler (connecting handles creates animated arrow & task label)
   const onConnect = useCallback(
     (params) => {
+      const isLight = theme === 'light';
       const newEdge = {
         ...params,
         id: 'edge-' + Date.now(),
         animated: true,
-        style: { stroke: '#3b82f6', strokeWidth: 2.5 },
+        style: { stroke: isLight ? '#2563eb' : '#3b82f6', strokeWidth: 3 },
         markerEnd: {
           type: MarkerType.ArrowClosed,
-          color: '#3b82f6',
+          color: isLight ? '#2563eb' : '#3b82f6',
         },
         label: 'Migration Task',
-        labelStyle: { fill: '#cbd5e1', fontSize: 11, fontWeight: 600 },
-        labelBgStyle: { fill: '#0f172a', rx: 6, ry: 6 },
+        labelStyle: { fill: isLight ? '#0f172a' : '#cbd5e1', fontSize: 11, fontWeight: 700 },
+        labelBgStyle: { fill: isLight ? '#ffffff' : '#0f172a', rx: 6, ry: 6, stroke: isLight ? '#cbd5e1' : '#334155' },
         labelBgPadding: [8, 4],
       };
       setEdges((eds) => addEdge(newEdge, eds));
     },
-    [setEdges]
+    [setEdges, theme]
   );
 
   // Handle Edge click to open modal
@@ -274,7 +285,7 @@ export function App() {
     const colsMax = 3;
 
     setNodes((nds) =>
-      nds.map((node, index) => {
+      nds.map((node) => {
         if (node.type === 'zoneNode') return node;
         const x = 80 + col * spacingX;
         const y = 80 + row * spacingY;
@@ -292,7 +303,7 @@ export function App() {
   };
 
   return (
-    <div className={`w-screen h-screen flex flex-col ${theme === 'dark' ? 'dark' : ''}`}>
+    <div className="w-screen h-screen flex flex-col font-sans transition-colors duration-200">
       {/* Top Header Navigation */}
       <Header
         onAddRepoUrl={handleAddRepoUrl}

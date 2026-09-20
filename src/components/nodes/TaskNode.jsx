@@ -1,30 +1,30 @@
 import React, { memo, useState } from 'react';
 import { Handle, Position } from '@xyflow/react';
-import { CheckSquare, Square, Plus, Trash2, Clock, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
+import { CheckSquare, Square, Plus, Trash2, Clock, CheckCircle2, Sparkles } from 'lucide-react';
 
 const STATUS_CONFIG = {
   'todo': {
     label: 'TO DO',
-    badge: 'bg-slate-800 text-slate-300 border-slate-700',
+    badge: 'bg-slate-100 text-slate-800 border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 font-bold',
     icon: Clock,
   },
   'in-progress': {
     label: 'IN PROGRESS',
-    badge: 'bg-blue-500/20 text-blue-400 border-blue-500/40',
+    badge: 'bg-blue-100 text-blue-900 border-blue-400 dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500/40 font-bold',
     icon: Sparkles,
   },
   'done': {
     label: 'DONE',
-    badge: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40',
+    badge: 'bg-emerald-100 text-emerald-900 border-emerald-400 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/40 font-bold',
     icon: CheckCircle2,
   },
 };
 
 const PRIORITY_CONFIG = {
-  low: 'text-slate-400 bg-slate-900 border-slate-800',
-  medium: 'text-amber-400 bg-amber-950/40 border-amber-800/60',
-  high: 'text-orange-400 bg-orange-950/40 border-orange-800/60',
-  critical: 'text-rose-400 bg-rose-950/50 border-rose-800/80 font-bold',
+  low: 'text-slate-700 bg-slate-100 border-slate-300 dark:text-slate-400 dark:bg-slate-900 dark:border-slate-800',
+  medium: 'text-amber-900 bg-amber-100 border-amber-300 dark:text-amber-400 dark:bg-amber-950/40 dark:border-amber-800/60 font-semibold',
+  high: 'text-orange-900 bg-orange-100 border-orange-300 dark:text-orange-400 dark:bg-orange-950/40 dark:border-orange-800/60 font-bold',
+  critical: 'text-rose-900 bg-rose-100 border-rose-300 dark:text-rose-400 dark:bg-rose-950/50 dark:border-rose-800/80 font-bold',
 };
 
 export const TaskNode = memo(({ id, data, selected }) => {
@@ -94,35 +94,35 @@ export const TaskNode = memo(({ id, data, selected }) => {
 
   return (
     <div
-      className={`w-80 rounded-xl border bg-slate-950/90 backdrop-blur-md shadow-2xl transition-all duration-200 overflow-hidden ${
-        selected ? 'ring-2 ring-blue-500 border-blue-500 shadow-blue-500/20' : 'border-slate-800'
+      className={`w-80 rounded-xl border-2 bg-white dark:bg-slate-950/90 backdrop-blur-md shadow-xl transition-all duration-200 overflow-hidden ${
+        selected ? 'ring-4 ring-indigo-500/40 border-indigo-600 dark:border-indigo-500 scale-[1.02]' : 'border-indigo-200 dark:border-slate-800'
       }`}
     >
       {/* Handles */}
       <Handle
         type="target"
         position={Position.Top}
-        className="w-3.5 h-3.5 bg-indigo-500 border-2 border-slate-900 !-top-2 hover:scale-125 transition-transform"
+        className="w-4 h-4 bg-indigo-600 dark:bg-indigo-500 border-2 border-white dark:border-slate-900 !-top-2 hover:scale-125 transition-transform"
       />
       <Handle
         type="target"
         position={Position.Left}
         id="left"
-        className="w-3.5 h-3.5 bg-indigo-500 border-2 border-slate-900 !-left-2 hover:scale-125 transition-transform"
+        className="w-4 h-4 bg-indigo-600 dark:bg-indigo-500 border-2 border-white dark:border-slate-900 !-left-2 hover:scale-125 transition-transform"
       />
 
       {/* Header */}
-      <div className="p-3 border-b border-slate-800 bg-gradient-to-r from-indigo-950/50 to-slate-900/50 flex items-center justify-between">
+      <div className="p-3 border-b border-indigo-100 dark:border-slate-800 bg-gradient-to-r from-indigo-100/80 via-slate-50 to-indigo-50 dark:from-indigo-950/50 dark:to-slate-900/50 flex items-center justify-between">
         <div className="flex items-center gap-2 min-w-0">
-          <StatusIcon className={`w-4 h-4 ${status === 'done' ? 'text-emerald-400' : status === 'in-progress' ? 'text-blue-400' : 'text-slate-400'}`} />
-          <h3 className="font-semibold text-sm text-slate-100 truncate">{data.title || 'Migration Task'}</h3>
+          <StatusIcon className={`w-4 h-4 ${status === 'done' ? 'text-emerald-600 dark:text-emerald-400' : status === 'in-progress' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400'}`} />
+          <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 truncate">{data.title || 'Migration Task'}</h3>
         </div>
         <button
           onClick={handleDeleteNode}
-          className="text-slate-500 hover:text-rose-400 p-1 rounded-md hover:bg-slate-800/50 transition-colors"
+          className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-1.5 rounded-lg hover:bg-slate-200/60 dark:hover:bg-slate-800/50 transition-colors"
           title="Delete Task"
         >
-          <Trash2 className="w-3.5 h-3.5" />
+          <Trash2 className="w-4 h-4" />
         </button>
       </div>
 
@@ -134,45 +134,45 @@ export const TaskNode = memo(({ id, data, selected }) => {
             value={status}
             onChange={handleStatusChange}
             onClick={(e) => e.stopPropagation()}
-            className={`text-xs px-2.5 py-1 rounded-full font-semibold border cursor-pointer focus:outline-none ${statusConfig.badge}`}
+            className={`text-xs px-3 py-1 rounded-full font-bold border cursor-pointer focus:outline-none shadow-xs ${statusConfig.badge}`}
           >
-            <option value="todo" className="bg-slate-900 text-slate-300">TO DO</option>
-            <option value="in-progress" className="bg-slate-900 text-blue-400">IN PROGRESS</option>
-            <option value="done" className="bg-slate-900 text-emerald-400">DONE</option>
+            <option value="todo">TO DO</option>
+            <option value="in-progress">IN PROGRESS</option>
+            <option value="done">DONE</option>
           </select>
 
           <select
             value={priority}
             onChange={handlePriorityChange}
             onClick={(e) => e.stopPropagation()}
-            className={`text-xs px-2 py-0.5 rounded border uppercase font-mono cursor-pointer focus:outline-none ${PRIORITY_CONFIG[priority]}`}
+            className={`text-xs px-2.5 py-0.5 rounded border uppercase font-mono cursor-pointer focus:outline-none ${PRIORITY_CONFIG[priority]}`}
           >
-            <option value="low" className="bg-slate-900 text-slate-300">LOW</option>
-            <option value="medium" className="bg-slate-900 text-amber-400">MED</option>
-            <option value="high" className="bg-slate-900 text-orange-400">HIGH</option>
-            <option value="critical" className="bg-slate-900 text-rose-400">CRITICAL</option>
+            <option value="low">LOW</option>
+            <option value="medium">MED</option>
+            <option value="high">HIGH</option>
+            <option value="critical">CRITICAL</option>
           </select>
         </div>
 
         {/* Task Description */}
         {data.description && (
-          <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-2 rounded-lg border border-slate-800/80">
+          <p className="text-xs text-slate-800 dark:text-slate-300 font-medium leading-relaxed bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800/80">
             {data.description}
           </p>
         )}
 
         {/* Checklist section */}
         <div className="space-y-2 pt-1">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
+          <div className="flex items-center justify-between text-xs text-slate-700 dark:text-slate-400 font-bold">
             <span>Checklist</span>
             <span>{completedCount} / {checklist.length} ({progressPct}%)</span>
           </div>
 
           {/* Progress bar */}
-          <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800">
+          <div className="w-full bg-slate-200 dark:bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-300 dark:border-slate-800">
             <div
               className={`h-full transition-all duration-300 ${
-                progressPct === 100 ? 'bg-emerald-500' : 'bg-blue-500'
+                progressPct === 100 ? 'bg-emerald-600 dark:bg-emerald-500' : 'bg-blue-600 dark:bg-blue-500'
               }`}
               style={{ width: `${progressPct}%` }}
             />
@@ -184,15 +184,15 @@ export const TaskNode = memo(({ id, data, selected }) => {
               <div
                 key={item.id}
                 onClick={() => handleToggleChecklist(item.id)}
-                className="group flex items-center justify-between p-1.5 rounded hover:bg-slate-900/80 cursor-pointer text-xs transition-colors"
+                className="group flex items-center justify-between p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900/80 cursor-pointer text-xs transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-800"
               >
                 <div className="flex items-center gap-2 min-w-0">
                   {item.done ? (
-                    <CheckSquare className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    <CheckSquare className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                   ) : (
-                    <Square className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />
+                    <Square className="w-4 h-4 text-slate-400 dark:text-slate-500 flex-shrink-0" />
                   )}
-                  <span className={`truncate text-slate-200 ${item.done ? 'line-through text-slate-500' : ''}`}>
+                  <span className={`truncate font-medium text-slate-800 dark:text-slate-200 ${item.done ? 'line-through text-slate-400 dark:text-slate-500' : ''}`}>
                     {item.text}
                   </span>
                 </div>
@@ -201,9 +201,9 @@ export const TaskNode = memo(({ id, data, selected }) => {
                     e.stopPropagation();
                     handleDeleteCheckItem(item.id);
                   }}
-                  className="opacity-0 group-hover:opacity-100 p-0.5 text-slate-500 hover:text-rose-400 transition-opacity"
+                  className="opacity-0 group-hover:opacity-100 p-0.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-opacity"
                 >
-                  <Trash2 className="w-3 h-3" />
+                  <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
             ))}
@@ -217,12 +217,12 @@ export const TaskNode = memo(({ id, data, selected }) => {
               onChange={(e) => setNewCheckitem(e.target.value)}
               placeholder="Add step/subtask..."
               onClick={(e) => e.stopPropagation()}
-              className="flex-1 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              className="flex-1 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-lg px-2.5 py-1 text-xs text-slate-900 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 font-medium"
             />
             <button
               type="submit"
               onClick={(e) => e.stopPropagation()}
-              className="p-1 rounded bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 transition-colors"
+              className="p-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-colors"
             >
               <Plus className="w-3.5 h-3.5" />
             </button>
@@ -234,13 +234,13 @@ export const TaskNode = memo(({ id, data, selected }) => {
       <Handle
         type="source"
         position={Position.Bottom}
-        className="w-3.5 h-3.5 bg-indigo-500 border-2 border-slate-900 !-bottom-2 hover:scale-125 transition-transform"
+        className="w-4 h-4 bg-indigo-600 dark:bg-indigo-500 border-2 border-white dark:border-slate-900 !-bottom-2 hover:scale-125 transition-transform"
       />
       <Handle
         type="source"
         position={Position.Right}
         id="right"
-        className="w-3.5 h-3.5 bg-indigo-500 border-2 border-slate-900 !-right-2 hover:scale-125 transition-transform"
+        className="w-4 h-4 bg-indigo-600 dark:bg-indigo-500 border-2 border-white dark:border-slate-900 !-right-2 hover:scale-125 transition-transform"
       />
     </div>
   );
