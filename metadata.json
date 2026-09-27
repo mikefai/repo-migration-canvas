@@ -1,0 +1,8 @@
+{
+  "name": "Repo Migration Canvas",
+  "description": "Visual migration planning and repository architecture canvas for multi-repo refactoring and tracking.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
