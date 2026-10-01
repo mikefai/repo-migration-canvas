@@ -34,6 +34,9 @@ const INITIAL_WORKSPACE = {
         fullName: 'facebook/react',
         platform: 'github',
         role: 'source',
+        status: 'draft',
+        color: 'slate',
+        category: 'Frontend',
         description: 'Legacy frontend core components',
         tags: ['Frontend', 'Legacy'],
       },
@@ -51,16 +54,54 @@ const INITIAL_WORKSPACE = {
         fullName: 'vercel/next.js',
         platform: 'github',
         role: 'target',
+        status: 'done',
+        color: 'green',
+        category: 'Microservice',
         description: 'Modern Next.js monorepo target',
         tags: ['Monorepo', 'Target'],
       },
     },
     {
+      id: 'service-db-1',
+      type: 'serviceNode',
+      position: { x: 80, y: 380 },
+      data: {
+        name: 'postgres-db',
+        serviceType: 'Database',
+        techStack: 'PostgreSQL',
+        icon: 'database',
+        port: ':5432',
+        status: 'pending',
+        color: 'amber',
+        category: 'Database',
+        description: 'Legacy PostgreSQL relational database',
+        endpoints: ['postgres://postgres.internal:5432'],
+      },
+    },
+    {
+      id: 'service-cloud-1',
+      type: 'serviceNode',
+      position: { x: 530, y: 380 },
+      data: {
+        name: 'aws-k8s-cluster',
+        serviceType: 'Cloud / Kubernetes',
+        techStack: 'AWS / EKS',
+        icon: 'cloud',
+        port: ':443',
+        status: 'in-progress',
+        color: 'blue',
+        category: 'DevOps',
+        description: 'Destination Cloud infrastructure and ingress',
+        endpoints: ['https://eks.us-east-1.amazonaws.com'],
+      },
+    },
+    {
       id: 'task-1',
       type: 'taskNode',
-      position: { x: 280, y: 520 },
+      position: { x: 300, y: 640 },
       data: {
         title: 'Migrate UI Components & Hooks',
+        category: 'Frontend',
         description: 'Extract reusable UI primitive components and custom state hooks into the new target monorepo packages/ui folder.',
         status: 'in-progress',
         priority: 'high',
@@ -75,7 +116,7 @@ const INITIAL_WORKSPACE = {
     {
       id: 'note-1',
       type: 'noteNode',
-      position: { x: 680, y: 520 },
+      position: { x: 700, y: 640 },
       data: {
         title: 'Migration Guidelines',
         content: '- Maintain zero breaking changes on exported component APIs\n- Ensure proper TypeScript types are exported\n- Run `npm test` before pushing PRs',
@@ -99,6 +140,14 @@ const INITIAL_WORKSPACE = {
       animated: true,
       style: { stroke: '#10b981', strokeWidth: 2 },
       label: 'Deploy Target',
+    },
+    {
+      id: 'edge-3',
+      source: 'service-db-1',
+      target: 'service-cloud-1',
+      animated: true,
+      style: { stroke: '#06b6d4', strokeWidth: 2 },
+      label: 'Cloud Replication',
     },
   ],
 };
@@ -176,13 +225,34 @@ export function deleteWorkspace(id) {
 }
 
 export function exportWorkspaceToJson(workspace) {
-  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(workspace, null, 2));
+  // Strip runtime event handler closures before exporting
+  const cleanedNodes = (workspace.nodes || []).map((node) => {
+    const { onUpdateData, onDeleteNode, ...cleanData } = node.data || {};
+    return {
+      ...node,
+      data: cleanData,
+    };
+  });
+
+  const exportPayload = {
+    name: workspace.name || 'Migration Flow',
+    exportedAt: new Date().toISOString(),
+    nodes: cleanedNodes,
+    edges: workspace.edges || [],
+    version: '1.0',
+  };
+
+  const jsonStr = JSON.stringify(exportPayload, null, 2);
+  const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
   const downloadAnchor = document.createElement('a');
-  downloadAnchor.setAttribute("href", dataStr);
-  downloadAnchor.setAttribute("download", `${workspace.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}-canvas.json`);
+  downloadAnchor.href = url;
+  const safeName = (workspace.name || 'migration-flow').toLowerCase().replace(/[^a-z0-9]/g, '-');
+  downloadAnchor.download = `${safeName || 'migration-flow'}-canvas.json`;
   document.body.appendChild(downloadAnchor);
   downloadAnchor.click();
   downloadAnchor.remove();
+  URL.revokeObjectURL(url);
 }
 
 export function importWorkspaceFromJson(jsonContent) {

@@ -46,9 +46,26 @@ export function TaskModal({ isOpen, onClose, taskData, onSave, onDelete }) {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Move Auth Module & User Schemas"
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              placeholder="e.g. dependency, reference, deprecated..."
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-mono"
             />
+            <div className="flex items-center gap-1.5 pt-1.5 flex-wrap">
+              <span className="text-[10px] text-slate-500 font-medium">Quick presets:</span>
+              {['dependency', 'reference', 'deprecated', 'extract-source', 'deploy-target'].map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => setTitle(preset)}
+                  className={`text-[10px] font-mono px-2 py-0.5 rounded-md border transition-colors ${
+                    title.toLowerCase() === preset
+                      ? 'bg-blue-600/30 text-blue-300 border-blue-500/50'
+                      : 'bg-slate-800/80 hover:bg-slate-700 text-slate-300 border-slate-700'
+                  }`}
+                >
+                  {preset}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">

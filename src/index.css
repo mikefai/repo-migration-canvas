@@ -57,6 +57,14 @@
   cursor: pointer;
 }
 
+/* Custom React Flow marquee selection box styling */
+.react-flow__selection {
+  background-color: rgba(59, 130, 246, 0.18) !important;
+  border: 1.5px dashed rgba(59, 130, 246, 0.9) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3) !important;
+}
+
 /* Custom scrollbars */
 ::-webkit-scrollbar {
   width: 6px;

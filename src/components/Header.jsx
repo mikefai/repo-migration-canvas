@@ -1,28 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   GitBranch,
   Plus,
   Search,
   Download,
   Upload,
-  FolderKanban,
   Sun,
   Moon,
-  CheckCircle2,
   ListTodo,
   StickyNote,
   LayoutGrid,
-  Sparkles,
-  Layers,
   Trash2,
+  Server,
+  ChevronUp,
+  ChevronDown,
+  X,
+  Focus,
+  Sparkles,
 } from 'lucide-react';
 import { parseRepoUrl } from '../utils/urlParser';
+import { NodeStatusBadge } from '../utils/nodeStatus';
 
 export function Header({
+  nodes = [],
   onAddRepoUrl,
   onAddNode,
   searchQuery,
   onSearchChange,
+  focusedNodeId,
+  onFocusNode,
+  searchMatchingNodeIds = [],
   workspaces,
   activeWorkspaceId,
   onSwitchWorkspace,
@@ -35,6 +42,7 @@ export function Header({
 }) {
   const [urlInput, setUrlInput] = useState('');
   const [showWorkspaceMenu, setShowWorkspaceMenu] = useState(false);
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
 
   const activeWorkspace = workspaces.find((w) => w.id === activeWorkspaceId) || workspaces[0];
 
@@ -47,7 +55,17 @@ export function Header({
       onAddRepoUrl(parsed);
       setUrlInput('');
     } else {
-      alert('Please enter a valid Git repository URL or path (e.g., https://github.com/owner/repo)');
+      // Create fallback repo node with the raw name
+      onAddRepoUrl({
+        valid: true,
+        url: '',
+        owner: 'custom',
+        repo: urlInput.trim(),
+        fullName: `custom/${urlInput.trim()}`,
+        platform: 'git',
+        domain: 'git',
+      });
+      setUrlInput('');
     }
   };
 
@@ -60,15 +78,51 @@ export function Header({
       try {
         onImportWorkspace(event.target.result);
       } catch (err) {
-        alert('Failed to import JSON workspace: ' + err.message);
+        console.error('Failed to import JSON workspace:', err);
       }
     };
     reader.readAsText(file);
     e.target.value = null;
   };
 
+  // Compute matching nodes for search
+  const matchingNodes = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    return nodes.filter((n) => searchMatchingNodeIds.includes(n.id));
+  }, [nodes, searchMatchingNodeIds, searchQuery]);
+
+  const currentIndex = useMemo(() => {
+    if (!focusedNodeId || matchingNodes.length === 0) return -1;
+    return matchingNodes.findIndex((n) => n.id === focusedNodeId);
+  }, [focusedNodeId, matchingNodes]);
+
+  const handleNextMatch = () => {
+    if (matchingNodes.length === 0) return;
+    const nextIdx = currentIndex < 0 ? 0 : (currentIndex + 1) % matchingNodes.length;
+    onFocusNode?.(matchingNodes[nextIdx].id);
+  };
+
+  const handlePrevMatch = () => {
+    if (matchingNodes.length === 0) return;
+    const prevIdx = currentIndex < 0 ? 0 : (currentIndex - 1 + matchingNodes.length) % matchingNodes.length;
+    onFocusNode?.(matchingNodes[prevIdx].id);
+  };
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (e.shiftKey) {
+        handlePrevMatch();
+      } else {
+        handleNextMatch();
+      }
+    } else if (e.key === 'Escape') {
+      setShowSearchDropdown(false);
+    }
+  };
+
   return (
-    <header className="h-16 border-b border-slate-800 bg-slate-950/90 backdrop-blur-xl px-4 flex items-center justify-between gap-3 relative z-30 shadow-lg">
+    <header className="h-16 border-b border-slate-800 bg-slate-950/90 backdrop-blur-xl px-4 flex items-center justify-between gap-3 relative z-30 shadow-lg select-none">
       {/* Left section: App Brand & Workspace Selector */}
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
@@ -81,7 +135,7 @@ export function Header({
             <h1 className="font-bold text-sm tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-300 bg-clip-text text-transparent">
               Repo Migration Canvas
             </h1>
-            <p className="text-[10px] text-slate-500 font-mono">v1.0 • Offline Capable</p>
+            <p className="text-[10px] text-slate-500 font-mono">v1.0 • Auto-Panning Canvas</p>
           </div>
         </div>
 
@@ -89,45 +143,41 @@ export function Header({
         <div className="relative">
           <button
             onClick={() => setShowWorkspaceMenu(!showWorkspaceMenu)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-medium text-slate-200 hover:bg-slate-800 hover:border-slate-700 transition-colors"
+            className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 hover:text-white hover:border-slate-700 flex items-center gap-2 transition-all"
           >
-            <FolderKanban className="w-3.5 h-3.5 text-blue-400" />
-            <span className="max-w-[140px] truncate">{activeWorkspace?.name || 'Main Workspace'}</span>
-            <span className="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded-full font-mono">
-              {workspaces.length}
+            <span className="font-semibold">{activeWorkspace?.name || 'Workspace'}</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-blue-950 text-blue-400 border border-blue-800/60 font-mono">
+              {nodes.length} cards
             </span>
           </button>
 
           {showWorkspaceMenu && (
-            <div className="absolute left-0 top-11 w-64 rounded-xl bg-slate-900 border border-slate-800 shadow-2xl p-2 space-y-1 z-50">
-              <div className="text-[11px] font-semibold text-slate-400 px-2 py-1 flex items-center justify-between border-b border-slate-800">
-                <span>Workspaces</span>
+            <div className="absolute top-full left-0 mt-2 w-64 rounded-2xl bg-slate-900/95 border border-slate-800/90 shadow-2xl backdrop-blur-xl p-2 z-50 ring-1 ring-white/10">
+              <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                <span>Switch Workspace</span>
                 <button
-                  onClick={() => {
-                    setShowWorkspaceMenu(false);
-                    onCreateWorkspace();
-                  }}
-                  className="text-blue-400 hover:text-blue-300 flex items-center gap-1 text-[10px]"
+                  onClick={onCreateWorkspace}
+                  className="text-blue-400 hover:text-blue-300 text-[10px] font-semibold flex items-center gap-1"
                 >
                   <Plus className="w-3 h-3" /> New
                 </button>
               </div>
 
-              <div className="max-h-48 overflow-y-auto space-y-0.5">
+              <div className="space-y-1 mt-1 max-h-48 overflow-y-auto">
                 {workspaces.map((ws) => (
                   <div
                     key={ws.id}
+                    className={`flex items-center justify-between p-2 rounded-xl text-xs cursor-pointer transition-colors ${
+                      ws.id === activeWorkspaceId
+                        ? 'bg-blue-600/20 text-blue-300 border border-blue-500/30'
+                        : 'text-slate-300 hover:bg-slate-800/60'
+                    }`}
                     onClick={() => {
                       onSwitchWorkspace(ws.id);
                       setShowWorkspaceMenu(false);
                     }}
-                    className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs cursor-pointer transition-colors ${
-                      ws.id === activeWorkspaceId
-                        ? 'bg-blue-600/20 text-blue-300 font-semibold border border-blue-500/30'
-                        : 'text-slate-300 hover:bg-slate-800/80'
-                    }`}
                   >
-                    <span className="truncate flex-1">{ws.name}</span>
+                    <span className="truncate font-medium">{ws.name}</span>
                     {workspaces.length > 1 && (
                       <button
                         onClick={(e) => {
@@ -135,6 +185,7 @@ export function Header({
                           onDeleteWorkspace(ws.id);
                         }}
                         className="text-slate-500 hover:text-rose-400 p-1 rounded transition-colors"
+                        title="Delete Workspace"
                       >
                         <Trash2 className="w-3 h-3" />
                       </button>
@@ -148,8 +199,8 @@ export function Header({
       </div>
 
       {/* Center Section: Quick URL Paste Bar */}
-      <form onSubmit={handleUrlSubmit} className="flex-1 max-w-xl">
-        <div className="relative flex items-center">
+      <form onSubmit={handleUrlSubmit} className="flex-1 max-w-md hidden md:flex">
+        <div className="relative flex items-center w-full">
           <input
             type="text"
             value={urlInput}
@@ -166,10 +217,132 @@ export function Header({
         </div>
       </form>
 
-      {/* Right Section: Add Nodes, Search, Import/Export, Theme */}
+      {/* Right Section: Interactive Search Bar, Quick Palette, Import/Export */}
       <div className="flex items-center gap-2">
-        {/* Add Nodes Palette */}
-        <div className="flex items-center gap-1 bg-slate-900/80 border border-slate-800 p-1 rounded-xl">
+        {/* Interactive Search Bar with Auto-Panning */}
+        <div className="relative w-64">
+          <div className="relative flex items-center">
+            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => {
+                onSearchChange(e.target.value);
+                setShowSearchDropdown(true);
+              }}
+              onFocus={() => setShowSearchDropdown(true)}
+              onKeyDown={handleSearchKeyDown}
+              placeholder="Search repository / node..."
+              className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-8 pr-20 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all"
+            />
+
+            {/* Counter badge & Navigation arrows */}
+            {searchQuery.trim() && (
+              <div className="absolute right-1.5 flex items-center gap-1 text-[10px] font-mono">
+                <span className="text-slate-300 font-bold bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">
+                  {matchingNodes.length > 0 ? `${currentIndex >= 0 ? currentIndex + 1 : 1}/${matchingNodes.length}` : '0'}
+                </span>
+                <button
+                  type="button"
+                  onClick={handlePrevMatch}
+                  disabled={matchingNodes.length === 0}
+                  className="p-0.5 hover:bg-slate-800 rounded text-slate-400 hover:text-white disabled:opacity-30"
+                  title="Previous match (Shift+Enter)"
+                >
+                  <ChevronUp className="w-3 h-3" />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNextMatch}
+                  disabled={matchingNodes.length === 0}
+                  className="p-0.5 hover:bg-slate-800 rounded text-slate-400 hover:text-white disabled:opacity-30"
+                  title="Next match (Enter)"
+                >
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onSearchChange('');
+                    onFocusNode?.(null);
+                    setShowSearchDropdown(false);
+                  }}
+                  className="p-0.5 hover:bg-slate-800 rounded text-slate-400 hover:text-rose-400 ml-0.5"
+                  title="Clear search"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Search Results Autocomplete Dropdown */}
+          {showSearchDropdown && searchQuery.trim() && (
+            <div className="absolute top-full right-0 mt-2 w-80 z-50 rounded-2xl bg-slate-900/95 border border-slate-800 shadow-2xl backdrop-blur-xl p-2 space-y-1 max-h-80 overflow-y-auto ring-1 ring-white/10">
+              <div className="px-2 py-1 text-[10px] font-bold font-mono text-slate-400 uppercase tracking-wider flex items-center justify-between border-b border-slate-800/80">
+                <span className="flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-amber-400" />
+                  <span>Matching Nodes</span>
+                </span>
+                <span className="text-slate-500">{matchingNodes.length} found</span>
+              </div>
+
+              {matchingNodes.length === 0 ? (
+                <div className="p-3 text-center text-xs text-slate-500">
+                  No matching repository or node names
+                </div>
+              ) : (
+                matchingNodes.map((node) => {
+                  const isSelected = node.id === focusedNodeId;
+                  const nodeLabel = node.data?.repo || node.data?.fullName || node.data?.name || node.data?.title || 'Node';
+                  const nodeSub = node.data?.owner || node.data?.serviceType || node.type;
+                  const status = node.data?.status;
+
+                  return (
+                    <button
+                      key={node.id}
+                      type="button"
+                      onClick={() => {
+                        onFocusNode?.(node.id);
+                        setShowSearchDropdown(false);
+                      }}
+                      className={`w-full flex items-center justify-between gap-2 p-2 rounded-xl text-left transition-all ${
+                        isSelected
+                          ? 'bg-blue-600/30 border border-blue-500/60 text-white font-semibold ring-1 ring-blue-500/40 shadow-md'
+                          : 'hover:bg-slate-800/80 text-slate-300 border border-transparent'
+                      }`}
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5">
+                          <GitBranch className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
+                          <span className="text-xs truncate font-mono font-medium">{nodeLabel}</span>
+                        </div>
+                        <div className="text-[10px] text-slate-400 truncate pl-5">
+                          {nodeSub}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                        {status && <NodeStatusBadge status={status} size="xs" />}
+                        <Focus className={`w-3.5 h-3.5 ${isSelected ? 'text-amber-400 animate-pulse' : 'text-slate-500'}`} />
+                      </div>
+                    </button>
+                  );
+                })
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Quick Add Nodes Palette */}
+        <div className="hidden lg:flex items-center gap-1 bg-slate-900/80 border border-slate-800 p-1 rounded-xl">
+          <button
+            onClick={() => onAddNode('serviceNode')}
+            className="px-2.5 py-1 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg flex items-center gap-1.5 transition-colors"
+            title="Add Service / Microservice Node"
+          >
+            <Server className="w-3.5 h-3.5 text-cyan-400" /> Service
+          </button>
           <button
             onClick={() => onAddNode('taskNode')}
             className="px-2.5 py-1 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg flex items-center gap-1.5 transition-colors"
@@ -191,18 +364,6 @@ export function Header({
           >
             <LayoutGrid className="w-3.5 h-3.5 text-slate-400" /> Zone
           </button>
-        </div>
-
-        {/* Search Bar */}
-        <div className="relative w-40">
-          <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search cards..."
-            className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-8 pr-2 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500"
-          />
         </div>
 
         {/* Export / Import JSON */}
